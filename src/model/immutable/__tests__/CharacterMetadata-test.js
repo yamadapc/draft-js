@@ -15,6 +15,7 @@ jest.disableAutomock();
 
 const CharacterMetadata = require('CharacterMetadata');
 const {BOLD, BOLD_ITALIC, NONE, UNDERLINE} = require('SampleDraftInlineStyle');
+const {Map} = require('immutable');
 
 const plain = CharacterMetadata.create();
 const bold = CharacterMetadata.create({style: BOLD});
@@ -107,4 +108,24 @@ test('must reuse objects by defaulting config properties', () => {
   expect(
     CharacterMetadata.create({style: UNDERLINE}) === underlined,
   ).toMatchSnapshot();
+});
+
+test('should cache character metadatas', () => {
+  CharacterMetadata.pool.clear();
+  const config1 = {
+    style: BOLD,
+    entity: 'a',
+  };
+  const config2 = {
+    style: BOLD,
+    entity: 'a',
+  };
+  const config1Map = new Map(config1);
+  const config2Map = new Map(config1);
+  const entity1 = CharacterMetadata.create(config1);
+  const entity2 = CharacterMetadata.create(config2);
+  expect(config1 === config2).toBe(false);
+  expect(config1Map === config2Map).toBe(false);
+  expect(entity1 === entity2).toBe(true);
+  expect(CharacterMetadata.pool.size).toBe(1);
 });

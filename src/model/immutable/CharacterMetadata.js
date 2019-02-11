@@ -108,6 +108,7 @@ let pool: Map<Map<any, any>, CharacterMetadata> = Map([
   [Map(defaultRecord), EMPTY],
 ]);
 
+CharacterMetadata.pool = pool;
 CharacterMetadata.EMPTY = EMPTY;
 
 module.exports = CharacterMetadata;
